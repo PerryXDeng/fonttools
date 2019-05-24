@@ -711,7 +711,7 @@ class FontBuilder(object):
             defaults = _maxpDefaultsOTF
         self._initTableWithValues("maxp", defaults, {})
 
-    def setupDummyDSIG(self):
+    def setupDummyDSIG(self, empty=False):
         """This adds a dummy DSIG table to the font to make some MS applications
         happy. This does not properly sign the font.
         """
@@ -726,12 +726,20 @@ class FontBuilder(object):
         sig.ulFormat = 1
         sig.ulOffset = 20
 
-        values = dict(
-            ulVersion = 1,
-            usFlag = 1,
-            usNumSigs = 1,
-            signatureRecords = [sig],
-        )
+        if empty:
+            values = dict(
+                ulVersion = 1,
+                usFlag = 0,
+                usNumSigs = 0,
+                signatureRecords = [],
+            )
+        else:
+            values = dict(
+                ulVersion = 1,
+                usFlag = 1,
+                usNumSigs = 1,
+                signatureRecords = [sig],
+            )
         self._initTableWithValues("DSIG", {}, values)
 
     def addOpenTypeFeatures(self, features, filename=None, tables=None):
